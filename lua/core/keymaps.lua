@@ -9,11 +9,26 @@ local function map(mode, lhs, rhs, opts)
   end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
+local open = true
 
 local function toogle()
-  vim.api.nvim_command('wincmd l')
   NTGlobal["terminal"]:toggle()
   vim.api.nvim_command('NERDTreeToggle')
+  open = not open
+end
+
+local function focus_tree()
+  if not open then
+    toogle()
+  end
+    vim.api.nvim_command('NERDTreeFocus')
+end
+
+local function focus_terminal()
+  if not open then
+    toogle()
+  end
+    NTGlobal["terminal"].window:focus()
 end
 
 -----------------------------------------------------------
@@ -57,21 +72,18 @@ map('n', '<leader>q', ':qa!<CR>')
 -----------------------------------------------------------
 
 -- Terminal mappings
-map('t', '<Esc>', '<c-\\><c-n>')
-vim.keymap.set('n', '<C-q>', toogle)
+map('t', '<Esc>', '<c-\\><c-n>')                                                            -- exit terminal mode
+vim.keymap.set('n', '<C-q>', toogle)                                                        -- toggle
+vim.keymap.set('n', '<C-f>', focus_tree)                                                    -- focus tree
+vim.keymap.set('n', '<C-t>', focus_terminal)                                                -- focus terminal
 map('n', '<leader>1', ':lua NTGlobal["terminal"]:open(1)<cr>')                              -- terminal 1
 map('n', '<leader>2', ':lua NTGlobal["terminal"]:open(2)<cr>')                              -- terminal 2
 map('n', '<leader>3', ':lua NTGlobal["terminal"]:open(3)<cr>')                              -- terminal 3
 map('n', '<leader>4', ':lua NTGlobal["terminal"]:open(4)<cr>')                              -- terminal 4
 map('n', '<leader>5', ':lua NTGlobal["terminal"]:open(5)<cr>')                              -- terminal 5
 
-map('n', '<C-t>', ':lua NTGlobal["terminal"].window:focus()<CR>')                                   -- focus terminal
--- NvimTree
-map('n', '<C-f>', ':NERDTreeFocus<CR>')                                                     -- focus tree
-map('t', '<C-f>', '<c-\\><c-n>:NERDTreeFocus<CR>')
-
 -- Tagbar
-map('n', '<C-z', ':TagbarToggle<CR>')          -- open/close
+map('n', '<C-z>', ':TagbarToggle<CR>')          -- open/close
 
 
 
